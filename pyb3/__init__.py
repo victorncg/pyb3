@@ -1,7 +1,9 @@
 
+import portfolio as pt
 
-def soma(x,y):
-    return x+y
+
+class Carteira(pt.Carteira):
+    pass
 
 
 
