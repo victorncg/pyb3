@@ -64,7 +64,7 @@ class Carteira:
         # vetor de desvios
         stds = self.std()
         # matriz de ativos       
-        l = [sorted([n1,n2]) for n1, _ in enumerate(self.ativos) for n2,_ in enumerate(s.ativos) if n1!=n2]
+        l = [sorted([n1,n2]) for n1, _ in enumerate(self.ativos) for n2,_ in enumerate(self.ativos) if n1!=n2]
         l = list(map(list, set(map(frozenset, l))))
         # calculo
         vol = sum([2*stds[n1]*stds[n2]*pesos[n1]*pesos[n2]*matriz[n1][n2] for n1, n2 in l]+[p**2*o**2 for p, o in zip(pesos, stds)])**(1/2)
