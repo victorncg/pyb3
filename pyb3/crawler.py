@@ -7,6 +7,52 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 
 # lib usada para buscar os dados
 
+
+# classe para manipular uma serie de uma tivo
+class Serie(pd.DataFrame):
+ 
+    @property
+    def _constructor(self):
+        return Serie
+
+    @property
+    def _constructor_sliced(self):
+        return pd.Series
+
+    # Gera a coluna de retornos dia a  tipo = 0 gera o retorno por ln
+    def gera_retornos(self, tipo=0):
+        df = self.copy()
+        df['retornos'] = np.log(df.price/df.price.shift(-1)) if not tipo else df.price/df.price.shift(-1)-1
+        return self._constructor(df.values.tolist(), columns = df.columns)
+
+    # Gera coluna com as médias moveis
+    def media_movel(self, n):
+        df = self.copy()
+        
+        df['media_movel'] = df.price.iloc[::-1].rolling(window=n).mean()    
+        return self._constructor(df.values.tolist(), columns = df.columns)
+    
+    
+    # calcula o coeficiente beta. O tipo é o tipo de retornos.
+    def coefbeta(self, tipo=0):
+        if 'retornos' not in self: self = self.gera_retornos()
+        d = 1 if len(str(min(self.date))) > 8 else 0
+        t = [min(self.date), max(self.date)]
+        ibov = Carteira('IBOV', intraday=d, periodo=t)['IBOV']
+        ibov = ibov.gera_retornos()
+      #  return ibov, self
+        df = self[['date', 'retornos']].merge(ibov[['date', 'retornos']], on='date')
+        df[['retornos_x', 'retornos_y']].cov().values[0][1]
+        beta = df[['retornos_x', 'retornos_y']].cov().values[0][1]/ibov.retornos.var()
+        return beta
+    
+    # desvio padrão dos retornos
+    def std(self, ddof=0):
+        if 'retornos' not in self: self = self.gera_retornos()
+        return self.retornos.std(ddof = ddof)
+    
+    
+
 # Busca as séries de preços dos ativos no site da uol
 class UolSeries:
     def __init__(self):
