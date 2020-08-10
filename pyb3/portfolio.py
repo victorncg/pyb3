@@ -1,13 +1,15 @@
 
 import pandas as pd
 from pyb3 import crawler
-
+from scipy.stats import norm
 
 
 # trabalha com um conjunto de series de ativos
 class Carteira:
     def __init__(self, ativos, volumes=[], intraday=0, periodo=[2010, 2030], dataini=0):
         ativos = ativos if type(ativos)==list else [ativos]
+        periodo = periodo if type(periodo)==list else [periodo]
+        volumes = volumes if type(volumes)==list else [volumes]
         series = crawler.UolSeries().get(ativos, intraday, periodo, dataini)
         for i in series:
             setattr(self, i[1], i[0])
@@ -69,7 +71,9 @@ class Carteira:
         # calculo
         vol = sum([2*stds[n1]*stds[n2]*pesos[n1]*pesos[n2]*matriz[n1][n2] for n1, n2 in l]+[p**2*o**2 for p, o in zip(pesos, stds)])**(1/2)
         return vol                      
-                              
-                              
+
+    # calcula o value at risk da carteira para determinado nível de confiança
+    def risco(self, nc):
+        return self.vol_carteira()*norm.ppf(nc)*sum(self.volumes)                              
 
 
