@@ -6,6 +6,11 @@ from datetime import datetime
 
 # Lib para tratar os balançoes obtidos da internet
 
+mes_trimestre = {
+3:1, 6:2, 9:3, 12:4}
+indice_ind = inv.indice_ind
+
+
 def todate(data): 
     return datetime.strptime(data, "%d/%m/%Y").date() if type(data) == str else data
 

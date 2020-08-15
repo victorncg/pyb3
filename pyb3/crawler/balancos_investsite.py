@@ -24,6 +24,7 @@ indice_ind = {
 1:'Resultado', 2:'Balanço Ativo', 3:'Balanço Passivo', 4:'Valor Adicionado', 
 5:'Fluxo de Caixa', 6:'Resultado Abrangente' #, 7:'Mutações do PL'
 }
+
 Dados = dados_ativos.Dados
 
 # Busca os demonstrativos no investsite.com.br
