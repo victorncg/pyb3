@@ -6,7 +6,7 @@ from pyb3 import opcoes as opc
 class Carteira(pt.Carteira):
     pass
 
-class Opcoes(pt.Opcoes):
+class Opcoes(opc.Opcoes):
     pass
 
 

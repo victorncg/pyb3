@@ -2,6 +2,7 @@
 
 import pandas as pd 
 import requests
+from datetime import datetime
 
 
 def todate(data): return datetime.strptime(data, "%d/%m/%Y").date()
