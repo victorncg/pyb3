@@ -2,7 +2,7 @@
 import pandas as pd 
 import requests 
 from bs4 import BeautifulSoup
-import dados_ativos
+from pyb3.crawler import dados_ativos
 
 # Busca os demonstrativos no investsite.com.br
 
