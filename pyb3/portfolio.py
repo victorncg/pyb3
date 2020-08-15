@@ -1,6 +1,6 @@
 
 import pandas as pd
-from pyb3.crawler import acoes
+from crawler import acoes
 from scipy.stats import norm
 
 
