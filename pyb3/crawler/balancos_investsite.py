@@ -58,7 +58,7 @@ class Raw:
             'ISIN': self.isin
           }
       #  print(url, data, headers)
-        response = requests.post(url, data=data, headers=headers)
+        response = requests.post(url, data=data, headers=headers, verify=False)
         soup = BeautifulSoup(response.content, 'html.parser')
         idd = tpind[1] if tri == 4 else tpind[1]+'_itr'
        # if not soup.find('table', id=idd):
