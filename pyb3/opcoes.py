@@ -30,11 +30,11 @@ class Opcoes:
         return opc
 
     # Gera a lista de todos os papeis
-    def __listar(self):
+    def listar(self):
         opc=[]
         colunas = ['ativo_obj','ativo', 'tipo', 'mod', 'vcto', 'strike', 'preco']
         opc = [pd.DataFrame(self.__lista_opcoes(i), columns=colunas) for i in self.papel]
-        self.listar = pd.concat(opc)
+        return pd.concat(opc)
 
 
 

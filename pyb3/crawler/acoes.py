@@ -7,7 +7,7 @@ import numpy as np
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 
-# lib usada para buscar os dados
+# lib usada para buscar os dados de series ações
 
 
 # classe para manipular uma serie de uma tivo
@@ -125,7 +125,11 @@ class UolSeries:
         return [[df[0][cols].rename(columns=rename), df[1]] for df in dfs if len(df[0])]
         
     def get(self, ativos, intraday=0, periodo=[2010, 2030], dataini=0):
-        return self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
+        df = self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
+        df['dataref'] = pd.to_datetime(df.dataref.astype(str), format='%Y%m%d')
+
+
+
 
 
 
