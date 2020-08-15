@@ -103,12 +103,13 @@ class UolSeries:
         
         for i, p in dfs:
             if len(i)>0:
-                i['date'] = (i.date.astype(float)/1000000).astype(int)
-                i['asset'] = p
+                i['dataref'] = (i.date.astype(float)/1000000).astype(int)
+                i['ativo'] = p
         
-        cols = ['asset','date','price','high','low','open','volume','close','bid','ask']
+        cols = ['ativo','dataref','price','high','low','open','volume','close','bid','ask']
+        rename = {'price':'preco', 'high':'maximo', 'low':'minimo', 'open':'abertura', 'close':'fech'}
 
-        return [[df[0][cols], df[1]] for df in dfs if len(df[0])]
+        return [[df[0][cols].rename(columns=rename), df[1]] for df in dfs if len(df[0])]
     
     # intraday do último dia
     def intraday(self, papel):
@@ -119,8 +120,9 @@ class UolSeries:
         for i, p in dfs:
             if len(i)>0:
                 i['asset'] = p
-        cols = ['asset','date','price','high','low','open','volume','close','bid','ask']
-        return [[df[0][cols], df[1]] for df in dfs if len(df[0])]
+        cols = ['ativo','dataref','price','high','low','open','volume','close','bid','ask']
+        rename = {'price':'preco', 'high':'maximo', 'low':'minimo', 'open':'abertura', 'close':'fech'}
+        return [[df[0][cols].rename(columns=rename), df[1]] for df in dfs if len(df[0])]
         
     def get(self, ativos, intraday=0, periodo=[2010, 2030], dataini=0):
         return self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
