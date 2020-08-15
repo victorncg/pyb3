@@ -34,6 +34,17 @@ class Raw:
         self.dados = Dados(self.papel)
         self.series = {}
         
+    # tenta acessar 20x o request
+    def post(self, url, data, headers):
+        for i in range(20):
+            try:
+                response = requests.post(url, data=data, headers=headers)
+                return response
+            except:
+                pass
+        print('Número de tentativas excedidas no investsite.com.br')
+        return 'erro'
+
     # obtem os dados 
     def get(self, ind, ano, tri):
     
@@ -58,7 +69,9 @@ class Raw:
             'ISIN': self.isin
           }
       #  print(url, data, headers)
-        response = requests.post(url, data=data, headers=headers, verify=False)
+        response = self.post(url, data, headers)
+        if response == 'erro': return
+            
         soup = BeautifulSoup(response.content, 'html.parser')
         idd = tpind[1] if tri == 4 else tpind[1]+'_itr'
        # if not soup.find('table', id=idd):
