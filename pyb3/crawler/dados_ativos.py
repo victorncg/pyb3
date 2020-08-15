@@ -1,5 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup
+import requests
 
 # Busca o codigo cvm, cnpj e isin usando o site da B3, 
 class Dados_B3:
