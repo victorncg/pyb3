@@ -37,7 +37,7 @@ class Serie(pd.DataFrame):
     # calcula o coeficiente beta. O tipo é o tipo de retornos.
     def coefbeta(self, tipo=0):
         if 'retornos' not in self: self = self.gera_retornos()
-        d = 1 if len(str(min(self.dataref))) > 8 else 0
+        d = 1 if min(self.dataref) > 0 else 0
         t = [min(self.dataref), max(self.dataref)]
         ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
@@ -118,18 +118,18 @@ class UolSeries:
         dfs = [(Serie([i for i in series[n][0]['docs']]), series[n][1]) for n, _ in enumerate(ids)]
         for i, p in dfs:
             if len(i)>0:
-                i['asset'] = p
+                i['dataref'] = i.date
+                i['ativo'] = p
         cols = ['ativo','dataref','price','high','low','open','volume','close','bid','ask']
         rename = {'price':'preco', 'high':'maximo', 'low':'minimo', 'open':'abertura', 'close':'fech'}
         return [[df[0][cols].rename(columns=rename), df[1]] for df in dfs if len(df[0])]
         
     def get(self, ativos, intraday=0, periodo=[2010, 2030], dataini=0):
         l = self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
+        form = '%Y%m%d' if not intraday else '%Y%m%d%H%M%S'
         for i in l:
-            i[0]['dataref'] = pd.to_datetime(i[0].dataref.astype(str), format='%Y%m%d')
+            i[0]['dataref'] = pd.to_datetime(i[0].dataref.astype(str), format=form)
         return l
-
-
 
 
 
