@@ -125,8 +125,10 @@ class UolSeries:
         return [[df[0][cols].rename(columns=rename), df[1]] for df in dfs if len(df[0])]
         
     def get(self, ativos, intraday=0, periodo=[2010, 2030], dataini=0):
-        df = self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
-        df['dataref'] = pd.to_datetime(df.dataref.astype(str), format='%Y%m%d')
+        l = self.historico(ativos, periodo, dataini) if not intraday else self.intraday(ativos)
+        for i in l:
+            i[0]['dataref'] = pd.to_datetime(i[0].dataref.astype(str), format='%Y%m%d')
+        return l
 
 
 
