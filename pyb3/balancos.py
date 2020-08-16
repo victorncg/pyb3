@@ -38,7 +38,7 @@ class Balancos:
     # Subtrai aos trimestre anteriores para obter o valor específico do trimestre
     def __subtrai_mes_ant(self, df1, df2):
         s = df1.merge(df2, how='left')
-        s.iloc[:,2] = s.iloc[:,2] - s.iloc[:,3].replace({pd.np.nan:0})
+        s.iloc[:,2] = s.iloc[:,2].replace({pd.np.nan:0}) - s.iloc[:,3].replace({pd.np.nan:0})
         s.drop(s.columns[3], axis=1, inplace=True)
         return s
         
