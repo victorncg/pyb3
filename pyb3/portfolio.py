@@ -3,6 +3,9 @@ import pandas as pd
 from pyb3.crawler import acoes
 from scipy.stats import norm
 
+def serie(ativo, volumes=[], intraday=0, periodo=[2010, 2030], dataini=0):
+    ativo=[ativo]
+    return acoes.UolSeries().get(ativos, intraday, periodo, dataini)[0]
 
 # trabalha com um conjunto de series de ativos
 class Carteira:
@@ -75,5 +78,9 @@ class Carteira:
     # calcula o value at risk da carteira para determinado nível de confiança
     def risco(self, nc):
         return self.vol_carteira()*norm.ppf(nc)*sum(self.volumes)                              
+
+
+
+
 
 
