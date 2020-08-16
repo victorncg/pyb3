@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 def serie(ativo, volumes=[], intraday=0, periodo=[2010, 2030], dataini=0):
     ativo=[ativo]
-    return acoes.UolSeries().get(ativos, intraday, periodo, dataini)[0]
+    return acoes.UolSeries().get(ativo, intraday, periodo, dataini)[0]
 
 # trabalha com um conjunto de series de ativos
 class Carteira:
