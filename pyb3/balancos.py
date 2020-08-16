@@ -68,7 +68,7 @@ class Balancos:
         return relatorio
 
     # Monta o layout da tabela
-    def get(self, ind, ano, tri, ajustado=True):
+    def get(self, ind, ano, tri, ajustado=True, n=0):
         self.ind,self.ano,self.tri, self.ajustado = ind, ano, tri, ajustado
         # encontra o trimestre inicial e final
         df = self.__raw()
@@ -92,11 +92,12 @@ class Balancos:
 
         df['ano'] = self.ano
         df['ativo'] = self.papel
-        df['indicador'] = indice_ind[self.ind]
+        df['demonstrativo'] = indice_ind[self.ind]
 
         df.rename(columns={df.columns[2]:'valor', 'Conta':'conta', 'Descrição':'descricao'}, inplace=True)
-        colunas = ['ativo', 'indicador', 'conta', 'descricao', 'dataref', 'dataini', 'datafin', 'trimestre', 'trimestreini', 'trimestrefin', 'ano', 'valor']
+        colunas = ['ativo', 'demonstrativo', 'conta', 'descricao', 'dataref', 'dataini', 'datafin', 'trimestre', 'trimestreini', 'trimestrefin', 'ano', 'valor']
         df = df[[c for c in colunas if c in df]]
+        if n: df = df[df.conta.str.count('\.')==n]
         return df
 
 
