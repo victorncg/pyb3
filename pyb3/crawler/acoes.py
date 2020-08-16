@@ -41,7 +41,7 @@ class Serie(pd.DataFrame):
         tmin, tmax = min(self.dataref), max(self.dataref)
         tmin = tmin.year*10000+tmin.month*100+tmin.day
         tmax = tmax.year*10000+tmax.month*100+tmax.day
-        t = [min(self.dataref), max(self.dataref)]
+        t = [tmin, tmax]
         ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
       #  return ibov, self
