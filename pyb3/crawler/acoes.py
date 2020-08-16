@@ -40,7 +40,7 @@ class Serie(pd.DataFrame):
         if 'retornos' not in self: self = self.gera_retornos()
         d = 1 if len(str(min(self.dataref))) > 8 else 0
         t = [min(self.dataref), max(self.dataref)]
-        ibov = Carteira('IBOV', intraday=d, periodo=t)['IBOV']
+        ibov = UolSeries.get('IBOV', intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
       #  return ibov, self
         df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
