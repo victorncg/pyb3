@@ -34,13 +34,12 @@ class Serie(pd.DataFrame):
         df['media_movel'] = df.preco.iloc[::-1].rolling(window=n).mean()    
         return self._constructor(df.values.tolist(), columns = df.columns)
     
-    
     # calcula o coeficiente beta. O tipo é o tipo de retornos.
     def coefbeta(self, tipo=0):
         if 'retornos' not in self: self = self.gera_retornos()
         d = 1 if len(str(min(self.dataref))) > 8 else 0
         t = [min(self.dataref), max(self.dataref)]
-        ibov = UolSeries.get('IBOV', intraday=d, periodo=t)[0][0]
+        ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
       #  return ibov, self
         df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
