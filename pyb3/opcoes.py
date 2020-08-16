@@ -10,7 +10,7 @@ def todate(data): return datetime.strptime(data, "%d/%m/%Y").date()
 class Opcoes:
     def __init__(self, papel):
         self.papel = papel if type(papel)==list else [papel]
-        self.__listar()
+
     # Gera os vencimentos
     def __vencimentos(self, papel):
         url = f'https://opcoes.net.br/listaopcoes/completa?au=False&uinhc=0&idLista=ML&idAcao={papel}&listarVencimentos=true&cotacoes=true'
