@@ -97,7 +97,7 @@ class Balancos:
         df.rename(columns={df.columns[2]:'valor', 'Conta':'conta', 'Descrição':'descricao'}, inplace=True)
         colunas = ['ativo', 'demonstrativo', 'conta', 'descricao', 'dataref', 'dataini', 'datafin', 'trimestre', 'trimestreini', 'trimestrefin', 'ano', 'valor']
         df = df[[c for c in colunas if c in df]]
-        if n: df = df[df.conta.str.count('\.')==n]
+        if n: df = df[df.conta.str.count('\.')<=n]
         return df
 
 

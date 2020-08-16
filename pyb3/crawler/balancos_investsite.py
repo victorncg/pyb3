@@ -21,8 +21,8 @@ trimestre = {
     4 : ['1231', 'DFP']    
 }
 indice_ind = {
-1:'Resultado', 2:'Balanço Ativo', 3:'Balanço Passivo', 4:'Valor Adicionado', 
-5:'Fluxo de Caixa', 6:'Resultado Abrangente' #, 7:'Mutações do PL'
+1:'Balanço Ativo',  2:'Balanço Passivo', 3:'Resultado', 6:'Fluxo de Caixa', 
+7:'Valor Adicionado',  8:'Resultado Abrangente' #, 7:'Mutações do PL'
 }
 
 Dados = dados_ativos.Dados
