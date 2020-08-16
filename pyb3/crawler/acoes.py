@@ -38,6 +38,9 @@ class Serie(pd.DataFrame):
     def coefbeta(self, tipo=0):
         if 'retornos' not in self: self = self.gera_retornos()
         d = 1 if min(self.dataref).hour > 0 else 0
+        tmin, tmax = min(self.dataref), max(self.dataref)
+        tmin = tmin.year*10000+tmin.month*100+tmin.day
+        tmax = tmax.year*10000+tmax.month*100+tmax.day
         t = [min(self.dataref), max(self.dataref)]
         ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
