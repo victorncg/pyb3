@@ -37,7 +37,7 @@ class Serie(pd.DataFrame):
     # calcula o coeficiente beta. O tipo é o tipo de retornos.
     def coefbeta(self, tipo=0):
         if 'retornos' not in self: self = self.gera_retornos()
-        d = 1 if min(self.dataref) > 0 else 0
+        d = 1 if min(self.dataref).hour > 0 else 0
         t = [min(self.dataref), max(self.dataref)]
         ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
         ibov = ibov.gera_retornos()
@@ -85,7 +85,6 @@ class UolSeries:
     def historico(self, papel, periodo, dataini):
         ids = self.__acao(papel)
         series = [(self.__pesquisar(i, 'interday'), i['code'].replace('.SA','') ) for i in ids]
-
 
         # tratando o periodo
         if len(str(min(periodo))) != len(str(max(periodo))):
