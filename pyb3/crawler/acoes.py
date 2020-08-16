@@ -24,26 +24,26 @@ class Serie(pd.DataFrame):
     # Gera a coluna de retornos dia a  tipo = 0 gera o retorno por ln
     def gera_retornos(self, tipo=0):
         df = self.copy()
-        df['retornos'] = np.log(df.price/df.price.shift(-1)) if not tipo else df.price/df.price.shift(-1)-1
+        df['retornos'] = np.log(df.preco/df.preco.shift(-1)) if not tipo else df.preco/df.preco.shift(-1)-1
         return self._constructor(df.values.tolist(), columns = df.columns)
 
     # Gera coluna com as médias moveis
     def media_movel(self, n):
         df = self.copy()
         
-        df['media_movel'] = df.price.iloc[::-1].rolling(window=n).mean()    
+        df['media_movel'] = df.preco.iloc[::-1].rolling(window=n).mean()    
         return self._constructor(df.values.tolist(), columns = df.columns)
     
     
     # calcula o coeficiente beta. O tipo é o tipo de retornos.
     def coefbeta(self, tipo=0):
         if 'retornos' not in self: self = self.gera_retornos()
-        d = 1 if len(str(min(self.date))) > 8 else 0
-        t = [min(self.date), max(self.date)]
+        d = 1 if len(str(min(self.dataref))) > 8 else 0
+        t = [min(self.dataref), max(self.dataref)]
         ibov = Carteira('IBOV', intraday=d, periodo=t)['IBOV']
         ibov = ibov.gera_retornos()
       #  return ibov, self
-        df = self[['date', 'retornos']].merge(ibov[['date', 'retornos']], on='date')
+        df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
         df[['retornos_x', 'retornos_y']].cov().values[0][1]
         beta = df[['retornos_x', 'retornos_y']].cov().values[0][1]/ibov.retornos.var()
         return beta

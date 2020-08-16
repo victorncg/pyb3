@@ -42,7 +42,7 @@ class Carteira:
     # matriz de correlação
     def matriz_correl(self):
         self.gera_retornos()
-        m = [[self[j][['date', 'retornos']].merge(self[i][['date', 'retornos']], on='date') for j in self.ativos] for i in self.ativos]
+        m = [[self[j][['dataref', 'retornos']].merge(self[i][['dataref', 'retornos']], on='dataref') for j in self.ativos] for i in self.ativos]
         m = [[i[['retornos_x','retornos_y']].corr().values[0][1] for i in s] for s in m]
         return pd.DataFrame(m, columns=self.ativos, index = self.ativos)
     
