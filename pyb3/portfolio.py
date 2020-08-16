@@ -10,7 +10,7 @@ class Carteira:
         ativos = ativos if type(ativos)==list else [ativos]
         periodo = periodo if type(periodo)==list else [periodo]
         volumes = volumes if type(volumes)==list else [volumes]
-        series = crawler.UolSeries().get(ativos, intraday, periodo, dataini)
+        series = acoes.UolSeries().get(ativos, intraday, periodo, dataini)
         for i in series:
             setattr(self, i[1], i[0])
         setattr(self, 'ativos', ativos)
