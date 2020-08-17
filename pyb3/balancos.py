@@ -98,11 +98,47 @@ class Balancos:
         colunas = ['ativo', 'demonstrativo', 'conta', 'descricao', 'dataref', 'dataini', 'datafin', 'trimestre', 'trimestreini', 'trimestrefin', 'ano', 'valor']
         df = df[[c for c in colunas if c in df]]
         if n: df = df[df.conta.str.count('\.')<=n]
-        return df
+        b = Balanco(data = df.values.tolist(), columns = df.columns)
+        b.b=self
+        return b
 
 
 
+# classe para analise fundamentalista
+class Balanco(pd.DataFrame):
 
+    @property
+    def _constructor(self):
+        return Balanco
+
+    @property
+    def _constructor_sliced(self):
+        return pd.Series
+
+    # gera a coluna de análise vertical
+    def analise_vertical(self):
+        df = self.copy()
+        df['av'] = df.valor/df.valor.tolist()[0]
+        return self._constructor(data=df.values.tolist(), columns = df.columns)
+
+   # gera a tabela com a nálise horizontal comparando com outro mês de outro ano 
+    def analise_horizontal(self, ano=0, tri=0):
+        ano = self.b.ano-1 if not ano else ano
+        tri = self.b.tri if not tri else tri
+        b1 = self.copy()
+        print(self.b.ind, ano, tri, self.b.ajustado)
+        b2 = self.b.get(self.params[0], ano, tri, self.params[3], n=2)
+        for b in [b1, b2]:
+            trimestre = [i for i in b if 'trimestre' in i]
+            dataref = [i for i in b if 'data' in i]
+            b['av'] = b.valor/b.valor.tolist()[0]
+            anotri = str(b.ano.tolist()[0]) +'/'+ str(b[trimestre[1]].tolist()[0])       
+            b.rename(columns = {'valor':'valor ' + anotri, 'av':'av '+anotri}, inplace=True)
+            b.drop(dataref+trimestre+['ano'], axis=1, inplace=True)
+        bc = b1.merge(b2, how='outer')
+        v1, v2 = [i for i in s if 'valor' in i]
+        bc['ah'] = bc[v1]/bc[v2]-1    
+        return self._constructor(data=bc.values.tolist(), columns = bc.columns)
 
 
 
