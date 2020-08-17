@@ -135,7 +135,7 @@ class Balanco(pd.DataFrame):
             b.rename(columns = {'valor':'valor ' + anotri, 'av':'av '+anotri}, inplace=True)
             b.drop(dataref+trimestre+['ano'], axis=1, inplace=True)
         bc = b1.merge(b2, how='outer')
-        v1, v2 = [i for i in s if 'valor' in i]
+        v1, v2 = [i for i in bc if 'valor' in i]
         bc['ah'] = bc[v1]/bc[v2]-1    
         return self._constructor(data=bc.values.tolist(), columns = bc.columns)
 
