@@ -69,7 +69,7 @@ class Balancos:
 
     # Monta o layout da tabela
     def get(self, ind, ano, tri, ajustado=True, n=0):
-        self.ind,self.ano,self.tri, self.ajustado = ind, ano, tri, ajustado
+        self.ind,self.ano,self.tri, self.ajustado, self.n = ind, ano, tri, ajustado, n
         # encontra o trimestre inicial e final
         df = self.__raw()
         df = df.copy()
@@ -126,8 +126,7 @@ class Balanco(pd.DataFrame):
         ano = self.b.ano-1 if not ano else ano
         tri = self.b.tri if not tri else tri
         b1 = self.copy()
-        print(self.b.ind, ano, tri, self.b.ajustado)
-        b2 = self.b.get(self.params[0], ano, tri, self.params[3], n=2)
+        b2 = self.b.get(self.b.ind, ano, tri, self.b.ajustado, n=self.b.n)
         for b in [b1, b2]:
             trimestre = [i for i in b if 'trimestre' in i]
             dataref = [i for i in b if 'data' in i]
