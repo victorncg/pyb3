@@ -211,7 +211,7 @@ class Raw:
         tabela = soup.find('tbody').findAll('tr')        
         driver.close()
         tabela = [[i.text.replace('\xa0','') if i.text.replace('\xa0','') not in ('','0') else None for i in j.find_all('td')[:3]] for j in tabela]
-        self.series.update({(ind, ano, tri):tabela})   
+        self.series.update({(ind, ano, tri):pd.DataFrame(tabela[1:], columns=tabela[0])})   
     
         return pd.DataFrame(tabela[1:], columns=tabela[0])
 
