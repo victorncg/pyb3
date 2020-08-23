@@ -143,7 +143,7 @@ class Balanco(pd.DataFrame):
     # retorna o float da conta
     def get_conta(self, conta):
         campo_valor = [i for i in self if 'valor' in i]
-        c = self[self['conta']==conta]['valor'].tolist()
+        c = self[self['conta']==conta][campo_valor].values.tolist()
         c=c[0][0] if c else pd.np.nan
         return c
 
