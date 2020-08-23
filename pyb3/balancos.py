@@ -118,7 +118,12 @@ class Balanco(pd.DataFrame):
     # gera a coluna de análise vertical
     def analise_vertical(self):
         df = self.copy()
-        df['av'] = df.valor/df.valor.tolist()[0]
+        #df['av'] = df.valor/df.valor.tolist()[0]
+
+        df['av']=df['valor']/ df.assign(conta1=df.conta.str[:df.conta.str.len().min()])\
+            .merge(df[['conta','valor']].rename(columns={'conta':'conta1'}), on='conta1')['valor_y']
+
+
         return self._constructor(data=df.values.tolist(), columns = df.columns)
 
    # gera a tabela com a nálise horizontal comparando com outro mês de outro ano 
@@ -146,6 +151,21 @@ class Balanco(pd.DataFrame):
         c = self[self['conta']==conta][campo_valor].values.tolist()
         c=c[0][0] if c else pd.np.nan
         return c
+
+    # resume pela conta
+    def n(self, n):
+        if n: df = df[df.conta.str.count('\.')<=n]
+        b = Balanco(data = df.values.tolist(), columns = df.columns)
+
+
+# cria uma classe int para mostrar o tipo de conta
+class teste(int):
+    def __repr__(self):
+        return f"""conta: {self.conta}\n
+                    descrição: {self.dsc}\n"""
+
+
+
 
 
 
