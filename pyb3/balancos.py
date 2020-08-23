@@ -115,15 +115,18 @@ class Balanco(pd.DataFrame):
     def _constructor_sliced(self):
         return pd.Series
 
-    # gera a coluna de análise vertical
+
+    # calcula a análise vertical
+    def __av(self, df):
+        #df['av'] = df.valor/df.valor.tolist()[0]
+        df['av']=df['valor']/ df.assign(conta1=df.conta.str[:df.conta.str.len().min()])\
+            .merge(df[['conta','valor']].rename(columns={'conta':'conta1'}), on='conta1')['valor_y']      
+        return df
+
+    # gera a coluna de análise vertical no dataframe
     def analise_vertical(self):
         df = self.copy()
-        #df['av'] = df.valor/df.valor.tolist()[0]
-
-        df['av']=df['valor']/ df.assign(conta1=df.conta.str[:df.conta.str.len().min()])\
-            .merge(df[['conta','valor']].rename(columns={'conta':'conta1'}), on='conta1')['valor_y']
-
-
+        df = self.__av(df)
         return self._constructor(data=df.values.tolist(), columns = df.columns)
 
    # gera a tabela com a nálise horizontal comparando com outro mês de outro ano 
@@ -135,7 +138,7 @@ class Balanco(pd.DataFrame):
         for b in [b1, b2]:
             trimestre = [i for i in b if 'trimestre' in i]
             dataref = [i for i in b if 'data' in i]
-            b = b.analise_vertical()
+            b = self.__av(b)
             anotri = str(b.ano.tolist()[0]) +'/'+ str(b[trimestre[-1]].tolist()[0])       
             b.rename(columns = {'valor':'valor ' + anotri, 'av':'av '+anotri}, inplace=True)
             b.drop(dataref+trimestre+['ano'], axis=1, inplace=True)
