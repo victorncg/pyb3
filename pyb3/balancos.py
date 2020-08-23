@@ -1,6 +1,7 @@
 
 import pandas as pd 
 from pyb3.crawler import balancos_investsite as inv
+from pyb3.crawler import balancos_cvm as cvm
 from datetime import datetime
 
 
@@ -16,10 +17,9 @@ def todate(data):
 
 class Balancos:
 
-    def __init__(self, papel, site=True):
+    def __init__(self, papel, wdriver='', cmv=0):
         self.papel=papel
-        self.site = site
-        self.balanco = inv.Raw(self.papel) if site else None
+        self.balanco = cvm.raw(self.papel, wdriver=wdriver) if cvm and wdriver else inv.Raw(self.papel)
         self.datarefs = {}
 
     # Transforma os valores em float
