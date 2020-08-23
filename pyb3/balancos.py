@@ -118,9 +118,10 @@ class Balanco(pd.DataFrame):
 
     # calcula a análise vertical
     def __av(self, df):
-        #df['av'] = df.valor/df.valor.tolist()[0]
-        df['av']=df['valor']/ df.assign(conta1=df.conta.str[:df.conta.str.len().min()])\
-            .merge(df[['conta','valor']].rename(columns={'conta':'conta1'}), on='conta1')['valor_y']      
+        if self.ind in []
+        df['av'] = df.valor/df.valor.tolist()[0]
+       # df['av']=df['valor']/ df.assign(conta1=df.conta.str[:df.conta.str.len().min()])\
+       #     .merge(df[['conta','valor']].rename(columns={'conta':'conta1'}), on='conta1')['valor_y']      
         return df
 
     # gera a coluna de análise vertical no dataframe
