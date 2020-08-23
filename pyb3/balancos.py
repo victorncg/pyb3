@@ -150,23 +150,27 @@ class Balanco(pd.DataFrame):
 
     # retorna o float da conta
     def get_conta(self, conta):
-        campo_valor = [i for i in self if 'valor' in i]
-        c = self[self['conta']==conta][campo_valor].values.tolist()
-        c=c[0][0] if c else pd.np.nan
-        return c
+        df = self.copy()
+        campo_valor = [i for i in df if 'valor' in i]
+        df = self.__av(df) if not [i for i in df if 'av' in i] else df
+        c = df[df['conta']==conta]
+        conta = Conta(c[campo_valor].sum())
+        conta.conta = c['conta'].tolist()[0]
+        conta.dsc = c['descricao'].tolist()[0]
+        conta.margem = c[[i for i in df if 'av' in i][0]].tolist()[0]
+
+        return conta
 
     # resume pela conta
     def n(self, n):
-        if n: df = df[df.conta.str.count('\.')<=n]
-        b = Balanco(data = df.values.tolist(), columns = df.columns)
+        df = df[df.conta.str.count('\.')<=n] if n else df
+        return self._constructor(data=df.values.tolist(), columns = df.columns)
 
 
 # cria uma classe int para mostrar o tipo de conta
-class teste(int):
+class Conta(float):
     def __repr__(self):
-        return f"""conta: {self.conta}\n
-                    descrição: {self.dsc}\n"""
-
+        return f"""conta: {self.conta}\ndescrição: {self.dsc}\nvalor: {str(self)}\nmargem: {str(self.margem)}"""
 
 
 
