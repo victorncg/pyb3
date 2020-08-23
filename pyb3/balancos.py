@@ -19,7 +19,7 @@ class Balancos:
 
     def __init__(self, papel, wdriver='', cvm=0):
         self.papel=papel
-        self.balanco = cvm.raw(self.papel, wdriver=wdriver) if cvm and wdriver else inv.Raw(self.papel)
+        self.balanco = cvm.Raw(self.papel, wdriver=wdriver) if cvm and wdriver else inv.Raw(self.papel)
         self.datarefs = {}
 
     # Transforma os valores em float
