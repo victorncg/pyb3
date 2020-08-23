@@ -25,7 +25,7 @@ class Balancos:
     # Transforma os valores em float
     def __trata_valores(self, df):
         if not df.iloc[:,2].dtype==float:
-            df.iloc[:,2] = df.iloc[:,2].str.replace('.','').str.replace(',','.').astype(float)
+            df.iloc[:,2] = df.iloc[:,2].str.replace('.','').str.replace(',','.').astype(float)*1000
         return df
         
     # Verifica os trimestres que o valor está consolidando
@@ -163,6 +163,7 @@ class Balanco(pd.DataFrame):
 
     # resume pela conta
     def n(self, n):
+        df = self.copy()
         df = df[df.conta.str.count('\.')<=n] if n else df
         return self._constructor(data=df.values.tolist(), columns = df.columns)
 
@@ -170,7 +171,7 @@ class Balanco(pd.DataFrame):
 # cria uma classe int para mostrar o tipo de conta
 class Conta(float):
     def __repr__(self):
-        return f"""conta: {self.conta}\ndescrição: {self.dsc}\nvalor: {str(self)}\nmargem: {str(self.margem)}"""
+        return f"conta: {self.conta}\ndescrição: {self.dsc}\nvalor: " + '{:>,.2f}'.format(self) + f"\nmargem: " + '{:>,.2f}'.format(self.margem*100)+"%"
 
 
 
