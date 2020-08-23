@@ -140,6 +140,12 @@ class Balanco(pd.DataFrame):
         return self._constructor(data=bc.values.tolist(), columns = bc.columns)
 
 
+    # retorna o float da conta
+    def get_conta(self, conta):
+        campo_valor = [i for i in self if 'valor' in i]
+        c = self[self['conta']=='1.01']['valor'].tolist()[0][0]
+        return c
+
 
 
 

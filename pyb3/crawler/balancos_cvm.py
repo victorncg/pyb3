@@ -32,8 +32,8 @@ link_ind = {
 }
 
 indice_ind = {
-1:'Balanço Ativo',  2:'Balanço Passivo', 3:'Resultado', 6:'Fluxo de Caixa', 
-7:'Valor Adicionado',  8:'Resultado Abrangente' #, 7:'Mutações do PL'
+1:'Balanço Ativo',  2:'Balanço Passivo', 3:'Resultado',  4:'Resultado Abrangente', 6:'Fluxo de Caixa', 
+7:'Valor Adicionado' #, 7:'Mutações do PL'
 }
 
 
