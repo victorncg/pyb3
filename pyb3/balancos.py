@@ -3,6 +3,7 @@ import pandas as pd
 from pyb3.crawler import balancos_investsite as inv
 from pyb3.crawler import balancos_cvm as bcvm
 from datetime import datetime
+import copy
 
 
 # Lib para tratar os balançoes obtidos da internet
@@ -99,7 +100,7 @@ class Balancos:
         df = df[[c for c in colunas if c in df]]
         if n: df = df[df.conta.str.count('\.')<=n]
         b = Balanco(data = df.values.tolist(), columns = df.columns)
-        b.b=self
+        b.b=copy.copy(self)
         return b
 
 
