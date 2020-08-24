@@ -132,10 +132,11 @@ class Balanco(pd.DataFrame):
 
    # gera a tabela com a nálise horizontal comparando com outro mês de outro ano 
     def analise_horizontal(self, ano=0, tri=0):
+        ano1, tri1 = self.b.ano, self.b.tri
         ano = self.b.ano-1 if not ano else ano
         tri = self.b.tri if not tri else tri
         b1 = self.copy()
-        b2 = self.b.get(self.b.ind, ano, tri, self.b.ajustado, n=self.b.n)
+        b2 = b1.b.get(self.b.ind, ano, tri, self.b.ajustado, n=self.b.n)
         for b in [b1, b2]:
             trimestre = [i for i in b if 'trimestre' in i]
             dataref = [i for i in b if 'data' in i]
@@ -143,9 +144,11 @@ class Balanco(pd.DataFrame):
             anotri = str(b.ano.tolist()[0]) +'/'+ str(b[trimestre[-1]].tolist()[0])       
             b.rename(columns = {'valor':'valor ' + anotri, 'av':'av '+anotri}, inplace=True)
             b.drop(dataref+trimestre+['ano'], axis=1, inplace=True)
+        self.b.ano, self.b.tri = ano1, tri1
         bc = b1.merge(b2, how='outer')
         v1, v2 = [i for i in bc if 'valor' in i]
-        bc['ah'] = bc[v1]/bc[v2]-1    
+        bc['ah'] = bc[v1]/bc[v2]-1   
+        
         return self._constructor(data=bc.values.tolist(), columns = bc.columns)
 
 
@@ -170,7 +173,8 @@ class Balanco(pd.DataFrame):
         df = self.copy()
         df = df[df.conta.str.count('\.')<=n] if n else df
         df = self._constructor(data=df.values.tolist(), columns = df.columns)
-        df.b = self.b
+        df.b = copy.copy(self.b)
+        df.b.n=n
         return df
 
 
