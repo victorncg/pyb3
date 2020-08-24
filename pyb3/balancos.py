@@ -136,7 +136,7 @@ class Balanco(pd.DataFrame):
         ano = self.b.ano-1 if not ano else ano
         tri = self.b.tri if not tri else tri
         b1 = self.copy()
-        b2 = b1.b.get(self.b.ind, ano, tri, self.b.ajustado, n=self.b.n)
+        b2 = self.b.get(self.b.ind, ano, tri, self.b.ajustado, n=self.b.n)
         for b in [b1, b2]:
             trimestre = [i for i in b if 'trimestre' in i]
             dataref = [i for i in b if 'data' in i]
