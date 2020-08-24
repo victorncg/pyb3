@@ -161,7 +161,7 @@ class Balanco(pd.DataFrame):
         conta = Conta(c[campo_valor[t-1]].sum())
         conta.conta = c['conta'].tolist()[0]
         conta.dsc = c['descricao'].tolist()[0]
-        conta.margem = c[[i for i in df if 'av' in i][0]].tolist()[0]
+        conta.margem = c[[i for i in df if 'av' in i][t-1]].tolist()[0]
 
         return conta
 
@@ -169,7 +169,9 @@ class Balanco(pd.DataFrame):
     def n(self, n):
         df = self.copy()
         df = df[df.conta.str.count('\.')<=n] if n else df
-        return self._constructor(data=df.values.tolist(), columns = df.columns)
+        df = self._constructor(data=df.values.tolist(), columns = df.columns)
+        df.b = self.b
+        return df
 
 
 # cria uma classe int para mostrar o tipo de conta
