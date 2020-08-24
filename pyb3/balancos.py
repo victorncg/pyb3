@@ -150,12 +150,15 @@ class Balanco(pd.DataFrame):
 
 
     # retorna o float da conta
-    def get_conta(self, conta):
-        df = self.copy()
+    def get_conta(self, conta, t=1):
+        if t:
+            df = self.copy()
+            df = self.__av(df) if not [i for i in df if 'av' in i] else df
+        else:
+            df = self.analise_horizontal()
         campo_valor = [i for i in df if 'valor' in i]
-        df = self.__av(df) if not [i for i in df if 'av' in i] else df
         c = df[df['conta']==conta]
-        conta = Conta(c[campo_valor].sum())
+        conta = Conta(c[campo_valor[t-1]].sum())
         conta.conta = c['conta'].tolist()[0]
         conta.dsc = c['descricao'].tolist()[0]
         conta.margem = c[[i for i in df if 'av' in i][0]].tolist()[0]
