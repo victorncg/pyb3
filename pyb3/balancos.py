@@ -204,7 +204,6 @@ class Conta(float):
         return f"conta: {self.conta}\ndescrição: {self.dsc}\nvalor: " + '{:>,.2f}'.format(self) + f"\nmargem: " + '{:>,.2f}'.format(self.margem*100)+"%"
 
 
-
 class AnaliseFundamentalista:
     def __init__(self, balanco, ano, tri):
         self.b=balanco
@@ -217,7 +216,8 @@ class AnaliseFundamentalista:
         inds = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in inds]
         for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i))})')
         for i in inds: formula=formula.replace(f'ind({i})', f'({str(self.indicador(i).formula)})')
-
+        for i in inds: formula_contas=formula_contas.replace(f'ind({i})', f'({str(self.indicador(i).formula_contas)})')
+            
         dscs = [i for i, _ in enumerate(calc) if calc.startswith('dsc',i)]
         d = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in dscs]
         dscs = [i.split(',') for i in d]
@@ -230,7 +230,7 @@ class AnaliseFundamentalista:
         contas = [i.split(',') for i in c]
         for i in contas: i.append(1) if len(i)==1 else 0
         contas = dict(zip(c,[self.b.get(int(i[0]), self.ano, self.tri, 0).get_conta(i, int(t)) for i,t in contas]))
-
+        
         for i in contas: formula = formula.replace(f'conta({i})', f'({str(contas[i].dsc)})')
         for i in dscs: formula = formula.replace(f'dsc({i})', f'({str(dscs[i].dsc)})')
         for i in contas: formula_contas = formula_contas.replace(f'conta({i})', f'({str(contas[i].conta)})')
@@ -252,11 +252,10 @@ class AnaliseFundamentalista:
         return pd.DataFrame([[i,self.calcular(f'ind({i})')] for i in dictind], columns=['Indicador', 'Valor'])
     
     
-    
 # cria uma classe int para mostrar o tipo de conta
 class Indicador(float):
     def __repr__(self):
-        return f"valor: " + '{:>,.2f}'.format(self) +f"\nformula: {self.formula}\nformula conta: {self.formula_conta}"
+        return f"valor: " + '{:>,.2f}'.format(self) +f"\nformula: {self.formula}\nformula contas: {self.formula_contas}"
 
 
 dictind = {# Balanço Patrimonial
