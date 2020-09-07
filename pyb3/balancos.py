@@ -213,7 +213,6 @@ class AnaliseFundamentalista:
         valor = eval(calc)
         valor = Indicador(valor)
         valor.formula=formula
-        valor.calculo = calculo
         return valor
         
     def indicador(self, ind):
