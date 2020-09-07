@@ -179,12 +179,11 @@ class Balanco(pd.DataFrame):
             df = self.__av(df) if not [i for i in df if 'av' in i] else df
         else:
             df = self.analise_horizontal()
-        campo_valor = [i for i in self if 'valor' in i]
-        c = pd.concat([self[self['descricao'].str.lower().str.contains(i)] for i in dsc]).drop_duplicates()
+        campo_valor = [i for i in df if 'valor' in i]
+        c = pd.concat([df[df['descricao'].str.lower().str.contains(i)] for i in dsc]).drop_duplicates()
         conta = Conta(c[campo_valor[t-1]].sum())
         conta.conta = ' + '.join([i for i in c['conta']])
         conta.dsc = ' + '.join([i for i in c['descricao']])
-        return c
         conta.margem=c[[i for i in df if 'av' in i][t-1]].sum()
         return conta
 
