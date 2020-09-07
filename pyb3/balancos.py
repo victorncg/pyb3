@@ -171,6 +171,22 @@ class Balanco(pd.DataFrame):
 
         return conta
 
+    # retorna a soma
+    def get_conta_dsc(self, dsc, t=1):
+        if t:
+            df = self.copy()
+            df = self.__av(df) if not [i for i in df if 'av' in i] else df
+        else:
+            df = self.analise_horizontal()
+        campo_valor = [i for i in self if 'valor' in i]
+        c = pd.concat([self[self['descricao'].str.lower().str.contains(i)] for i in dsc]).drop_duplicates()
+        conta = Conta(c[campo_valor[t-1]].sum())
+        conta.conta = ' + '.join([i for i in c['conta']])
+        conta.dsc = ' + '.join([i for i in c['descricao']])
+        conta.margem=c[[i for i in df if 'av' in i][t-1]].sum()
+        return conta
+
+
     # resume pela conta
     def n(self, n):
         df = self.copy()
@@ -249,8 +265,8 @@ dictind = {# Balanço Patrimonial
 
     # capital de giro
     'liquidez corrente' : 'conta(1.01)/conta(2.01)',
-    'ngc' : '(conta(1.01)-conta(1.01.01)-conta(1.01.02))-(conta(2.01)-conta(2.01.04))',
-    'ngc receita' : 'ind(ngc)/conta(3.01)',
+    'ncg' : '(conta(1.01)-conta(1.01.01)-conta(1.01.02))-(conta(2.01)-conta(2.01.04))',
+    'ncg receita' : 'ind(ncg)/conta(3.01)',
     'pmr' : 'conta(1.01.03)/conta(3.01)*360',
     'pme' : 'conta(1.01.04)/abs(conta(3.02))*360',
     'compras' : 'conta(1.01.04)-conta(1.01.04,0) +abs(conta(3.02))',
