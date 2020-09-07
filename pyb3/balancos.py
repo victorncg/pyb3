@@ -195,7 +195,7 @@ class AnaliseFundamentalista:
         self.tri = tri
         
     def calcular(self, calc):
-        calculo = calc
+        formula = calc
         inds = [i for i, _ in enumerate(calc) if calc.startswith('ind',i)]
         inds = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in inds]
         for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i))})')
