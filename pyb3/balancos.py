@@ -103,6 +103,9 @@ class Balancos:
         b.b=copy.copy(self)
         return b
 
+    def analise_fundamentalista(self, ano, tri):
+        return AnaliseFundamentalista(self, ano, tri)
+
 
 
 # classe para analise fundamentalista
@@ -202,7 +205,7 @@ class AnaliseFundamentalista:
         c = [calc[i+6: len(calc[:i+6]) + calc[i+6:].find(')')] for i in contas]
         contas = [i.split(',') for i in c]
         for i in contas: i.append(1) if len(i)==1 else 0
-        contas = dict(zip(c,[b.get(int(i[0]), self.ano, self.tri, 0).get_conta(i, int(t)) for i,t in contas]))
+        contas = dict(zip(c,[self.b.get(int(i[0]), self.ano, self.tri, 0).get_conta(i, int(t)) for i,t in contas]))
         
         for i in contas: formula = formula.replace(f'conta({i})', f'({str(contas[i].dsc)})')
         for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i])})')
