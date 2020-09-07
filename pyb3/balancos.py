@@ -159,11 +159,10 @@ class Balanco(pd.DataFrame):
     def get_conta(self, conta, t=1):
         if t:
             df = self.copy()
-            print([i for i in df if 'av' in i])
             df = self.__av(df) if not [i for i in df if 'av' in i] else df
         else:
             df = self.analise_horizontal()
-        return df
+
         campo_valor = [i for i in df if 'valor' in i]
         c = df[df['conta']==conta]
         conta = Conta(c[campo_valor[t-1]].sum())
