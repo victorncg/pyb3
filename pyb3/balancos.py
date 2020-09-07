@@ -69,7 +69,7 @@ class Balancos:
         return relatorio
 
     # Monta o layout da tabela
-    def get(self, ind, ano, tri, ajustado=True, n=0):
+    def get(self, ind, ano, tri, ajustado=False, n=0):
         self.ind,self.ano,self.tri, self.ajustado, self.n = ind, ano, tri, ajustado, n
         # encontra o trimestre inicial e final
         df = self.__raw()
@@ -182,6 +182,97 @@ class Balanco(pd.DataFrame):
 class Conta(float):
     def __repr__(self):
         return f"conta: {self.conta}\ndescrição: {self.dsc}\nvalor: " + '{:>,.2f}'.format(self) + f"\nmargem: " + '{:>,.2f}'.format(self.margem*100)+"%"
+
+
+
+class AnaliseFundamentalista:
+    def __init__(self, balanco, ano, tri):
+        self.b=balanco
+        self.ano = ano
+        self.tri = tri
+        
+    def calcular(self, calc):
+        calculo = calc
+        inds = [i for i, _ in enumerate(calc) if calc.startswith('ind',i)]
+        inds = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in inds]
+        for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i))})')
+        for i in inds: formula=formula.replace(f'ind({i})', f'({str(self.indicador(i).formula)})')
+
+        contas = [i for i, _ in enumerate(calc) if calc.startswith('conta',i)]
+        c = [calc[i+6: len(calc[:i+6]) + calc[i+6:].find(')')] for i in contas]
+        contas = [i.split(',') for i in c]
+        for i in contas: i.append(1) if len(i)==1 else 0
+        contas = dict(zip(c,[b.get(int(i[0]), self.ano, self.tri, 0).get_conta(i, int(t)) for i,t in contas]))
+        
+        for i in contas: formula = formula.replace(f'conta({i})', f'({str(contas[i].dsc)})')
+        for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i])})')
+        
+        valor = eval(calc)
+        valor = Indicador(valor)
+        valor.formula=formula
+        valor.calculo = calculo
+        return valor
+        
+    def indicador(self, ind):
+        return self.calcular(dictind[ind])
+    
+    def principais_indicadores(self):
+        return pd.DataFrame([[i,self.calcular(f'ind({i})')] for i in dictind], columns=['Indicador', 'Valor'])
+    
+    
+# cria uma classe int para mostrar o tipo de conta
+class Indicador(float):
+    def __repr__(self):
+        return f"valor: {self}\nformula: {self.formula}"
+
+
+dictind = {# Balanço Patrimonial
+    'margem ativo circulante' : 'conta(1.01)/conta(1)',
+    'margem ativo não circulante' : 'conta(1.02)/conta(1)',
+    'capital terceiros' : '(conta(2.01) + conta(2.02))/conta(2)',
+    'capital socios' : 'conta(2.03)/conta(2)',
+    'passivo oneroso' : '(conta(2.01.04)+conta(2.02.01))/conta(2)',
+
+    # Demonstração de resultado e margens
+    'margem bruta' : 'conta(3.03)/conta(3.01)',
+    'margem ebit' : 'conta(3.05)/conta(3.01)',
+    'margem liquida' : 'conta(3.09)/conta(3.01)',
+    'ebitda' : 'conta(3.05) + conta(6.01.01.03)',
+    'margem ebitda' : 'ind(ebitda)/conta(3.01)',
+
+    # Demonstração dos fluxos de caixa
+    'fco receita' : 'conta(6.01)/conta(3.01)',
+    'fci dep' : 'abs(conta(6.02))/conta(6.01.01.03)',
+    'fcl' : 'conta(6.01) + conta(6.02)',
+
+    # capital de giro
+    'liquidez corrente' : 'conta(1.01)/conta(2.01)',
+    'ngc' : '(conta(1.01)-conta(1.01.01)-conta(1.01.02))-(conta(2.01)-conta(2.01.04))',
+    'ngc receita' : 'ind(ngc)/conta(3.01)',
+    'pmr' : 'conta(1.01.03)/conta(3.01)*360',
+    'pme' : 'conta(1.01.04)/abs(conta(3.02))*360',
+    'compras' : 'conta(1.01.04)-conta(1.01.04,0) +abs(conta(3.02))',
+    'pmp' : 'conta(2.01.02)/ind(compras)*360',
+    'ciclo financeiro' : 'ind(pmr)+ind(pme)-ind(pmp)',
+
+
+    # endividamento
+    'endividamento geral' : 'ind(capital terceiros)',
+    'endividamento oneroso' : 'ind(passivo oneroso)',
+    'icj' : 'conta(3.05)/abs(conta(3.06))',
+    'divida liquida' : '(conta(2.01.04)+conta(2.02.01))-(conta(1.01.01)-conta(1.01.02))',
+    #'ebitda' = 'conta(3.05) + conta(6.01.01.03)'
+    'alavancamento ebitda' : 'ind(divida liquida)/ind(ebitda)',
+
+    # Analise integrada
+    #'margem liquida' = ind
+    'giro ativo' : 'conta(3.01)/conta(1)',
+    'roa' : 'ind(margem liquida)*ind(giro ativo)',
+    'alavancagem pl' : 'conta(1)/conta(2.03)',
+    'roe' : 'ind(roa) * ind(alavancagem pl)',
+    'roi' : 'conta(3.05)/conta(1)',
+    'custo medio divida' : 'abs(conta(3.06))/(conta(2.01)+conta(2.02))'
+}
 
 
 

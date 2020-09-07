@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+pd.set_option('display.max_colwidth', 1000)
 
 
 def ipea(cod, anual=0):
@@ -32,11 +33,17 @@ def pesquisar(nome):
     nome = nome.replace(' ','+')
     r = requests.get(f'http://www.ipeadata.gov.br/ListaSeries.aspx?Text={nome}&NoCache=1599012665349')
     soup = BeautifulSoup(r.content, 'html.parser')
-    t = [[''.join([j for j in i['href'] if j.isdigit()]), i.text] for i in soup.findAll('a', class_='dxeHyperlink')]
+    if not soup.find('table', id='grid_DXMainTable'):
+        print('Nenhum resultado encontrado')
+        return 
+    t = [[''.join([k for k in i.find('a')['href'] if k.isdigit()])] + [j.text for j in i.find_all('td') if not j.text==''] for i in soup.find('table', id='grid_DXMainTable').findAll('tr')[7:]]
+    df = pd.DataFrame(t, columns=['Cod', 'Nome', 'Unidade', 'Freq', 'Periodo'])
     
-    print(f"Cod {' '*(20-len('Cod'))} Nome")
-    print('')
-    [print(i[0] + ' '+'-'*(20-len(i[0]))+' ' + i[1]) for i in t]
+    return df
+ #   print(f"Cod {' '*(20-len('Cod'))} Nome")
+ #   print('')
+ #   [print(i[0] + ' '+'-'*(20-len(i[0]))+' ' + i[1]) for i in t]
+
 
 
 
