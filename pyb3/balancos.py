@@ -256,7 +256,7 @@ class AnaliseFundamentalista:
 # cria uma classe int para mostrar o tipo de conta
 class Indicador(float):
     def __repr__(self):
-        return f"valor: " + '{:>,.2f}'.format(self) +f"\nformula: {self.formula}"
+        return f"valor: " + '{:>,.2f}'.format(self) +f"\nformula: {self.formula}\nformula conta: {self.formula_conta}"
 
 
 dictind = {# Balanço Patrimonial
