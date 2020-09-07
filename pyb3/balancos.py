@@ -212,24 +212,37 @@ class AnaliseFundamentalista:
         self.tri = tri
         
     def calcular(self, calc):
-        formula = calc
+        formula, formula_contas = calc,calc
         inds = [i for i, _ in enumerate(calc) if calc.startswith('ind',i)]
         inds = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in inds]
         for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i))})')
         for i in inds: formula=formula.replace(f'ind({i})', f'({str(self.indicador(i).formula)})')
 
+        dscs = [i for i, _ in enumerate(calc) if calc.startswith('dsc',i)]
+        d = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in dscs]
+        dscs = [i.split(',') for i in d]
+        dscs = [[i.split()[0] for i in j] for j in dscs]
+        for i in dscs: i.append('1') if i[-1] not in ('0','1') else 0
+        dscs = dict(zip(d,[self.b.get(int(i[0]), self.ano, self.tri, 0).get_conta_dsc(i[1:-1], int(i[-1])) for i in dscs]))
+    
         contas = [i for i, _ in enumerate(calc) if calc.startswith('conta',i)]
         c = [calc[i+6: len(calc[:i+6]) + calc[i+6:].find(')')] for i in contas]
         contas = [i.split(',') for i in c]
         for i in contas: i.append(1) if len(i)==1 else 0
         contas = dict(zip(c,[self.b.get(int(i[0]), self.ano, self.tri, 0).get_conta(i, int(t)) for i,t in contas]))
-        
+
         for i in contas: formula = formula.replace(f'conta({i})', f'({str(contas[i].dsc)})')
+        for i in dscs: formula = formula.replace(f'dsc({i})', f'({str(dscs[i].dsc)})')
+        for i in contas: formula_contas = formula_contas.replace(f'conta({i})', f'({str(contas[i].conta)})')
+        for i in dscs: formula_contas = formula_contas.replace(f'dsc({i})', f'({str(dscs[i].conta)})')
+            
         for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i])})')
-        
+        for i in dscs: calc = calc.replace(f'dsc({i})',f'({str(dscs[i])})')
+
         valor = eval(calc)
         valor = Indicador(valor)
         valor.formula=formula
+        valor.formula_contas = formula_contas
         return valor
         
     def indicador(self, ind):
@@ -237,6 +250,7 @@ class AnaliseFundamentalista:
     
     def principais_indicadores(self):
         return pd.DataFrame([[i,self.calcular(f'ind({i})')] for i in dictind], columns=['Indicador', 'Valor'])
+    
     
     
 # cria uma classe int para mostrar o tipo de conta
@@ -256,12 +270,12 @@ dictind = {# Balanço Patrimonial
     'margem bruta' : 'conta(3.03)/conta(3.01)',
     'margem ebit' : 'conta(3.05)/conta(3.01)',
     'margem liquida' : 'conta(3.09)/conta(3.01)',
-    'ebitda' : 'conta(3.05) + conta(6.01.01.03)',
+    'ebitda' : 'conta(3.05) + dsc(6,amortiza ,deprecia)',
     'margem ebitda' : 'ind(ebitda)/conta(3.01)',
 
     # Demonstração dos fluxos de caixa
     'fco receita' : 'conta(6.01)/conta(3.01)',
-    'fci dep' : 'abs(conta(6.02))/conta(6.01.01.03)',
+    'fci dep' : 'abs(conta(6.02))/dsc(6,amortiza ,deprecia)',
     'fcl' : 'conta(6.01) + conta(6.02)',
 
     # capital de giro
@@ -273,7 +287,6 @@ dictind = {# Balanço Patrimonial
     'compras' : 'conta(1.01.04)-conta(1.01.04,0) +abs(conta(3.02))',
     'pmp' : 'conta(2.01.02)/ind(compras)*360',
     'ciclo financeiro' : 'ind(pmr)+ind(pme)-ind(pmp)',
-
 
     # endividamento
     'endividamento geral' : 'ind(capital terceiros)',
