@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 def Serie(ativo, volumes=[], intraday=0, periodo=[2010, 2030], dataini=0):
     ativo=[ativo]
-    return acoes.UolSeries().get(ativo, intraday, periodo, dataini)[0][0]
+    return acoes.UolSeries().get(ativo, intraday, periodo, dataini)[0][0] if intraday else acoes.YahooSeries(ativo,periodo,dataini)
 
 # trabalha com um conjunto de series de ativos
 class Carteira:
@@ -13,7 +13,7 @@ class Carteira:
         ativos = ativos if type(ativos)==list else [ativos]
         periodo = periodo if type(periodo)==list else [periodo]
         volumes = volumes if type(volumes)==list else [volumes]
-        series = acoes.UolSeries().get(ativos, intraday, periodo, dataini)
+        series = acoes.UolSeries().get(ativos, intraday, periodo, dataini) if intraday else acoes.YahooSeries(ativos,periodo,dataini)
         for i in series:
             setattr(self, i[1], i[0])
         setattr(self, 'ativos', ativos)

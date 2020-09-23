@@ -3,6 +3,8 @@
 import requests
 import pandas as pd
 import numpy as np
+from pandas_datareader import data as web
+from calendar import monthrange
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -42,7 +44,7 @@ class Serie(pd.DataFrame):
         tmin = tmin.year*10000+tmin.month*100+tmin.day
         tmax = tmax.year*10000+tmax.month*100+tmax.day
         t = [tmin, tmax]
-        ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0]
+        ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0] if d else YahooSeries(['IBOV'],periodo=t)
         ibov = ibov.gera_retornos()
       #  return ibov, self
         df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
@@ -55,7 +57,38 @@ class Serie(pd.DataFrame):
         if 'retornos' not in self: self = self.gera_retornos()
         return self.retornos.std(ddof = ddof)
     
+
+
     
+    
+# Busca as séries de preços dos ativos no yahoo através do pandas_dataheader
+def YahooSeries(ativos, periodo=[], dataini=[]):
+    ativos=ativos if type(ativos)==list else [ativos]
+    atvs = [i+'.SA' if i!='IBOV' else '^BVSP' for i in ativos]
+    periodo=periodo if type(periodo)==list else [periodo]
+    p=periodo if periodo else dataini
+    ps=[[x for x in j] for j in  [[str(i)[:4], str(i)[4:6],str(i)[6:8]] for i in p]]
+
+    dini=[[str(i[0])+str(i[1] if i[1] else '%02d' % 1)+str(i[2] if i[2] else '%02d' % 1)] for i in [min(ps)]]
+    if periodo:
+        dfin=[[str(i[0])+str(i[1] if i[1] else 12)+str(i[2] if i[2] else monthrange(int(i[0]), int(i[1]))[1] if i[1] else 31)] for i in [max(ps)]]
+     #   periodo=[dini[0][0],dfin[0][0]]   
+        s=web.get_data_yahoo(atvs,dini[0][0], dfin[0][0])
+    else: 
+        s= web.get_data_yahoo(atvs,dini[0][0])
+    s=[s[[i for i in s if i[0]=='Date' or i[1]==ativo]].reset_index().dropna() for ativo in atvs]
+   # ativos = [i.replace('.SA','') for i in ativos]
+    for df, ativo in zip(s, ativos): 
+        df.columns=[i[0] for i in df]
+        df.rename(columns={'Date':'dataref', 'Adj Close':'preco'}, inplace=True)
+        df['ativo']=ativo
+    
+        
+    return [list(i) for i in zip([Serie(i.values.tolist(), columns = i.columns)[['ativo', 'dataref', 'preco']].sort_values(by='dataref', ascending=False) for i in s],[i.replace('.SA','') for i in ativos]) if len(i[0])]
+
+
+
+
 
 # Busca as séries de preços dos ativos no site da uol
 class UolSeries:
