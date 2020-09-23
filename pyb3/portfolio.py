@@ -58,10 +58,10 @@ class Carteira:
     # Gera o retorno médio dos ativos
     def retorno_ativos(self):
         return [self[a].gera_retornos().retornos.mean() for a in self.ativos]
-        
+
     # soma os retornos médios ponderados para obter o retorno médio da carteira
     def retorno_carteira(self):
-        return [m[0]*m[1] for m in zip(self.retorno_ativos(), self.ponderar())]
+        return sum([m[0]*m[1] for m in zip(self.retorno_ativos(), self.ponderar())])
                   
     # Gera a volatilidade de cada ativo
     def std(self):
