@@ -55,13 +55,13 @@ class Carteira:
         if total:
             return [v/total for v in self.volumes]
 
-    # Gera os retornos de cada ativo da carteira ponderado
+    # Gera o retorno médio dos ativos
     def retorno_ativos(self):
-        return [m[0]*m[1] for m in zip([self[a].gera_retornos().retornos.mean() for a in self.ativos], self.ponderar())]
-
-    # soma os retornos ponderados dos ativos para saber o retorno da carteira
+        return [self[a].gera_retornos().retornos.mean() for a in self.ativos]
+        
+    # soma os retornos médios ponderados para obter o retorno médio da carteira
     def retorno_carteira(self):
-        return sum(self.retorno_ativos())
+        return [m[0]*m[1] for m in zip(self.retorno_ativos(), self.ponderar())]
                   
     # Gera a volatilidade de cada ativo
     def std(self):
