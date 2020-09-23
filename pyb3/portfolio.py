@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 def Serie(ativo, volumes=[], intraday=0, periodo=[2010, 2030], dataini=0):
     ativo=[ativo]
-    return acoes.UolSeries().get(ativo, intraday, periodo, dataini)[0][0] if intraday else acoes.YahooSeries(ativo,periodo,dataini)
+    return acoes.UolSeries().get(ativo, intraday, periodo, dataini)[0][0] if intraday else acoes.YahooSeries(ativo,periodo,dataini)[0][0]
 
 # trabalha com um conjunto de series de ativos
 class Carteira:
@@ -54,6 +54,14 @@ class Carteira:
         total = sum(self.volumes)
         if total:
             return [v/total for v in self.volumes]
+
+    # Gera os retornos de cada ativo da carteira ponderado
+    def retorno_ativos(self):
+        return [m[0]*m[1] for m in zip([self[a].gera_retornos().retornos.mean() for a in self.ativos], self.ponderar())]
+
+    # soma os retornos ponderados dos ativos para saber o retorno da carteira
+    def retorno_carteira(self):
+        return sum(self.retorno_ativos())
                   
     # Gera a volatilidade de cada ativo
     def std(self):
