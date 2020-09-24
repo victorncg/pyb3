@@ -43,7 +43,7 @@ class Serie(pd.DataFrame):
         tmin = tmin.year*10000+tmin.month*100+tmin.day
         tmax = tmax.year*10000+tmax.month*100+tmax.day
         t = [tmin, tmax]
-        ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0] if d else YahooSeries(['IBOV'],periodo=t)
+        ibov = UolSeries().get(['IBOV'], intraday=d, periodo=t)[0][0] if d else YahooSeries(['IBOV'],periodo=t)[0][0]
         ibov = ibov.gera_retornos()
       #  return ibov, self
         df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
@@ -56,8 +56,6 @@ class Serie(pd.DataFrame):
         if 'retornos' not in self: self = self.gera_retornos()
         return self.retornos.std(ddof = ddof)
     
-
-
 
     
 # Busca as séries de preços dos ativos no yahoo através do pandas_dataheader
