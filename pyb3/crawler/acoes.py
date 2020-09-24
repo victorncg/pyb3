@@ -3,8 +3,7 @@
 import requests
 import pandas as pd
 import numpy as np
-from pandas_datareader import data as web
-from calendar import monthrange
+
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -59,14 +58,16 @@ class Serie(pd.DataFrame):
     
 
 
-    
+
     
 # Busca as séries de preços dos ativos no yahoo através do pandas_dataheader
 def YahooSeries(ativos, periodo=[], dataini=[]):
+    from pandas_datareader import data as web
+    from calendar import monthrange
     ativos=ativos if type(ativos)==list else [ativos]
     atvs = [i+'.SA' if i!='IBOV' else '^BVSP' for i in ativos]
     periodo=periodo if type(periodo)==list else [periodo]
-    p=periodo if periodo else dataini
+    p=[dataini, 20300101] if dataini else periodo
     ps=[[x for x in j] for j in  [[str(i)[:4], str(i)[4:6],str(i)[6:8]] for i in p]]
 
     dini=[[str(i[0])+str(i[1] if i[1] else '%02d' % 1)+str(i[2] if i[2] else '%02d' % 1)] for i in [min(ps)]]
