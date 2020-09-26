@@ -58,7 +58,7 @@ class Carteira:
             return [v/total for v in self.volumes]
 
     # gera o beta da carteira
-    def coefbeta(self)
+    def coefbeta(self):
         betas = [self[a].coefbeta() for a in self.ativos]
         return sum([i*j for i,j in zip(betas, self.ponderar())])
 
@@ -75,7 +75,7 @@ class Carteira:
     def std(self):
         return [self[i].std() for i in self.ativos]
 
-                   
+
     # Gera a volatilidade da carteira
     # fonte: http://ferramentasdoinvestidor.com.br/financas-quantitativas/matematica-de-portfolio/
     def vol_carteira(self, aa=0):
