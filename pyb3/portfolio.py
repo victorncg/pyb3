@@ -39,8 +39,10 @@ class Carteira:
             self.__dict__[i] = self[i].media_movel(n)
             
     # insere volumes dos ativos da carteira
-    def add_volumes(self, volumes):
-        self.volumes=[0 for i in self.ativos] if not volumes else volumes
+    # se o total for 0, a lista de volume será o valor total de cada ativo
+    # se o total for definido, a lista de volumes serão as porcentagens
+    def add_volumes(self, volumes, total=0):
+        self.volumes = volumes if not total else [i/100*total for i in volumes]
             
     # matriz de correlação
     def matriz_correl(self):
@@ -55,21 +57,28 @@ class Carteira:
         if total:
             return [v/total for v in self.volumes]
 
+    # gera o beta da carteira
+    def coefbeta(self)
+        betas = [self[a].coefbeta() for a in self.ativos]
+        return sum([i*j for i,j in zip(betas, self.ponderar())])
+
     # Gera o retorno médio dos ativos
     def retorno_ativos(self):
         return [self[a].gera_retornos().retornos.mean() for a in self.ativos]
 
     # soma os retornos médios ponderados para obter o retorno médio da carteira
-    def retorno_carteira(self):
-        return sum([m[0]*m[1] for m in zip(self.retorno_ativos(), self.ponderar())])
+    def retorno_carteira(self, aa=0):
+        r = sum([m[0]*m[1] for m in zip(self.retorno_ativos(), self.ponderar())])
+        return r if not aa else (1+r)**252-1
                   
     # Gera a volatilidade de cada ativo
     def std(self):
         return [self[i].std() for i in self.ativos]
-                              
+
+                   
     # Gera a volatilidade da carteira
     # fonte: http://ferramentasdoinvestidor.com.br/financas-quantitativas/matematica-de-portfolio/
-    def vol_carteira(self):
+    def vol_carteira(self, aa=0):
         # obtem a matriz de correlação
         matriz = self.matriz_correl().values.tolist()
         # vetor de pesos de cada ativo
@@ -81,7 +90,10 @@ class Carteira:
         l = list(map(list, set(map(frozenset, l))))
         # calculo
         vol = sum([2*stds[n1]*stds[n2]*pesos[n1]*pesos[n2]*matriz[n1][n2] for n1, n2 in l]+[p**2*o**2 for p, o in zip(pesos, stds)])**(1/2)
-        return vol                      
+        return vol if not aa else vol*(252**0.5)                     
+
+    def coeficiente_variacao(self):
+        return self.vol_carteira(aa=1)/self.retorno_carteira(aa=1)
 
     # calcula o value at risk da carteira para determinado nível de confiança
     def risco(self, nc):

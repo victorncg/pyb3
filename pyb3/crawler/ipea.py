@@ -10,9 +10,10 @@ def ipea(cod, anual=0):
     r = requests.get(f'http://www.ipeadata.gov.br/ExibeSerie.aspx?serid={str(cod)}')
     dados = BeautifulSoup(r.content, 'html.parser')
     tabela = dados.find('table', id='grd_DXMainTable')
+    unidade = [i.split('</b>') for i in str(dados.find('table')).split('<br/>') if 'unidade' in i.lower()][0][1]
 
     tabela = [[n.text.replace('\n','') for n in j] for j in [i.find_all('td') for i in tabela.findAll('tr')]]
-    head=[tabela[1][0], tabela[2][0]]
+    head=[tabela[1][0], tabela[2][0]+' - '+unidade]
     columns = tabela[3:]
     df = pd.DataFrame(columns, columns=head)
     df.iloc[:,1] = df.iloc[:,1].str.replace('.','').str.replace(',','.')#.astype(float)

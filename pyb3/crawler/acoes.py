@@ -37,6 +37,7 @@ class Serie(pd.DataFrame):
     
     # calcula o coeficiente beta. O tipo é o tipo de retornos.
     def coefbeta(self, tipo=0):
+        if '__beta' in self.__dict__: return self.__beta
         if 'retornos' not in self: self = self.gera_retornos()
         d = 1 if min(self.dataref).hour > 0 else 0
         tmin, tmax = min(self.dataref), max(self.dataref)
@@ -48,13 +49,32 @@ class Serie(pd.DataFrame):
       #  return ibov, self
         df = self[['dataref', 'retornos']].merge(ibov[['dataref', 'retornos']], on='dataref')
         df[['retornos_x', 'retornos_y']].cov().values[0][1]
-        beta = df[['retornos_x', 'retornos_y']].cov().values[0][1]/ibov.retornos.var()
-        return beta
+        self.__beta = df[['retornos_x', 'retornos_y']].cov().values[0][1]/ibov.retornos.var()
+        return self.__beta
     
     # desvio padrão dos retornos
     def std(self, ddof=0):
         if 'retornos' not in self: self = self.gera_retornos()
         return self.retornos.std(ddof = ddof)
+
+    # obtem o risco país do Brasil
+    def risco_pais(self):
+        return
+
+    # obtem a inflação no brasil ou eua:
+    def inflacao(self, pais):
+        return
+
+    # obtem a taxa livre de risco
+    def tx_livre_risco(self):
+        if '__rf' in self.__dict__: return self.__rf
+        return
+
+    # calcula o ke do ativo (rm=retorno esperado)
+    def ke(self, rm):
+        return self.tx_livre_risco()+self.coefbeta()*(rm-self.tx_livre_risco())
+    
+
     
 
     
