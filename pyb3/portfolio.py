@@ -95,12 +95,25 @@ class Carteira:
     def coeficiente_variacao(self):
         return self.vol_carteira(aa=1)/self.retorno_carteira(aa=1)
 
-    # calcula o value at risk da carteira para determinado nível de confiança
-    def risco(self, nc):
-        return self.vol_carteira()*norm.ppf(nc)*sum(self.volumes)                              
+    # calcula o value at risk da carteira para determinado nível de confiança em determinada quantidade de dias
+    def risco(self, nc, dias=1):
+        return self.vol_carteira()*norm.ppf(nc)*sum(self.volumes)*(dias**0.5)                              
 
+    # obtem o risco país do Brasil
+    def risco_pais(self):
+        return
 
+    # obtem a inflação no brasil ou eua:
+    def inflacao(self, pais):
+        return
 
+    # obtem a taxa livre de risco
+    def tx_livre_risco(self, pais):
+        return
+
+    # calcula o ke do ativo (rm=retorno esperado)
+    def ke(self, rm):
+        return self.tx_livre_risco()+self.coefbeta()*(rm-self.tx_livre_risco())
 
 
 

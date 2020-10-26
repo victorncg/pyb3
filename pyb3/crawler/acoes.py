@@ -66,8 +66,7 @@ class Serie(pd.DataFrame):
         return
 
     # obtem a taxa livre de risco
-    def tx_livre_risco(self):
-        if '__rf' in self.__dict__: return self.__rf
+    def tx_livre_risco(self, pais):
         return
 
     # calcula o ke do ativo (rm=retorno esperado)
@@ -77,7 +76,7 @@ class Serie(pd.DataFrame):
 
     
 
-    
+
 # Busca as séries de preços dos ativos no yahoo através do pandas_dataheader
 def YahooSeries(ativos, periodo=[], dataini=[]):
     from pandas_datareader import data as web

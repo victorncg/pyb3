@@ -201,7 +201,7 @@ class Balanco(pd.DataFrame):
 # cria uma classe int para mostrar o tipo de conta
 class Conta(float):
     def __repr__(self):
-        return f"conta: {self.conta}\ndescrição: {self.dsc}\nvalor: " + '{:>,.2f}'.format(self) + f"\nmargem: " + '{:>,.2f}'.format(self.margem*100)+"%"
+        return f"conta: {self.conta}\ndescrição: {self.dsc}\nvalor: " + '{:>,.2f}'.format(self.real) + f"\nmargem: " + '{:>,.2f}'.format(self.margem*100)+"%"
 
 
 class AnaliseFundamentalista:
@@ -236,7 +236,7 @@ class AnaliseFundamentalista:
         for i in contas: formula_contas = formula_contas.replace(f'conta({i})', f'({str(contas[i].conta)})')
         for i in dscs: formula_contas = formula_contas.replace(f'dsc({i})', f'({str(dscs[i].conta)})')
             
-        for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i])})')
+        for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i].real)})')
         for i in dscs: calc = calc.replace(f'dsc({i})',f'({str(dscs[i])})')
 
         valor = eval(calc)
@@ -255,7 +255,7 @@ class AnaliseFundamentalista:
 # cria uma classe int para mostrar o tipo de conta
 class Indicador(float):
     def __repr__(self):
-        return f"valor: " + '{:>,.2f}'.format(self) +f"\nformula: {self.formula}\nformula contas: {self.formula_contas}"
+        return f"valor: " + '{:>,.2f}'.format(self.real) +f"\nformula: {self.formula}\nformula contas: {self.formula_contas}"
 
 
 dictind = {# Balanço Patrimonial
