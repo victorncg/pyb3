@@ -237,7 +237,7 @@ class AnaliseFundamentalista:
         for i in dscs: formula_contas = formula_contas.replace(f'dsc({i})', f'({str(dscs[i].conta)})')
             
         for i in contas: calc=calc.replace(f'conta({i})', f'({str(contas[i].real)})')
-        for i in dscs: calc = calc.replace(f'dsc({i})',f'({str(dscs[i])})')
+        for i in dscs: calc = calc.replace(f'dsc({i})',f'({str(dscs[i].real)})')
 
         valor = eval(calc)
         valor = Indicador(valor)
