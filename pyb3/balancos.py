@@ -214,7 +214,7 @@ class AnaliseFundamentalista:
         formula, formula_contas = calc,calc
         inds = [i for i, _ in enumerate(calc) if calc.startswith('ind',i)]
         inds = [calc[i+4: len(calc[:i+4]) + calc[i+4:].find(')')] for i in inds]
-        for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i))})')
+        for i in inds: calc=calc.replace(f'ind({i})', f'({str(self.indicador(i).real)})')
         for i in inds: formula=formula.replace(f'ind({i})', f'({str(self.indicador(i).formula)})')
         for i in inds: formula_contas=formula_contas.replace(f'ind({i})', f'({str(self.indicador(i).formula_contas)})')
             
